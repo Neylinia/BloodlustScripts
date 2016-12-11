@@ -33,3 +33,16 @@ function getEtats(personnage){
   etats["valtension"] = getAttrByName(personnage.id, "valtension");
   return etats
 }
+
+function getEffort(personnage){
+  var attr = findObjs({_type: 'attribute'});
+  var effort;
+  attr.forEach(function(at) {
+    if(at.get('_characterid') == speaking.id) {
+      if(at.get('name') == "effort") {
+        effort = at;
+      }
+    }
+  });
+  return effort;
+}
