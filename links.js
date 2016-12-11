@@ -46,3 +46,44 @@ function getEffort(personnage){
   });
   return effort;
 }
+
+function calculSeuil(etats){
+  var seuil = 6;
+  if ((etats.["valfatigue"] >= etats["valtension"]) && (etats.["valfatigue"] >= valFaiblesse)) {
+    if (etats.["valfatigue"] == 0) {
+      seuil = 6;
+    }
+    else if (etats.["valfatigue"] <= (11 + fatigue)) {
+      seuil = 9;
+    }
+    else if (etats.["valfatigue"] <= (20 + fatigue)) {
+      seuil = 12;
+    }
+    else {
+      seuil = 15;
+    }
+  }
+  else if ((etats["valtension"] > etats.["valfatigue"]) && (etats["valtension"] > valFaiblesse)) {
+    if (etats["valtension"]n <= (11 + tension)) {
+      seuil = 9;
+    }
+    else if (valTension <= (20 + tension)) {
+      seuil = 12;
+    }
+    else {
+      seuil = 15;
+    }
+  }
+  else if ((valFaiblesse > etats["valtension"]n) && (valFaiblesse > etats.["valfatigue"])) {
+    if (valFaiblesse <= (11 + faiblesse)) {
+      seuil = 9;
+    }
+    else if (valFaiblesse <= (20 + faiblesse)) {
+      seuil = 12;
+    }
+    else {
+      seuil = 15;
+    }
+  }
+  return seuil;
+}
