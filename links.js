@@ -22,3 +22,14 @@ function getArme(personnage,personnages){
 					});
   return arme;
 }
+
+function getEtats(personnage){
+  var etats = [];
+  etats["fatigue"] = getAttrByName(personnage.id, "fatigue");
+  etats["valfatigue"] = getAttrByName(personnage.id, "valfatigue");
+  etats["faiblesse"] = getAttrByName(personnage.id, "faiblesse");
+  etats["valfaiblesse"] = getAttrByName(personnage.id, "valfaiblesse");
+  etats["tension"] = getAttrByName(personnage.id, "tension");
+  etats["valtension"] = getAttrByName(personnage.id, "valtension");
+  return etats
+}
