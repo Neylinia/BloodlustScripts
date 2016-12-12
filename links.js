@@ -49,36 +49,36 @@ function getEffort(personnage){
 
 function calculSeuil(etats){
   var seuil = 6;
-  if ((etats.["valfatigue"] >= etats["valtension"]) && (etats.["valfatigue"] >= valFaiblesse)) {
-    if (etats.["valfatigue"] == 0) {
+  if ((etats["valfatigue"] >= etats["valtension"]) && (etats["valfatigue"] >= etats["valfaiblesse"])) {
+    if (etats["valfatigue"] == 0) {
       seuil = 6;
     }
-    else if (etats.["valfatigue"] <= (11 + fatigue)) {
+    else if (etats["valfatigue"] <= (11 + etats["fatigue"])) {
       seuil = 9;
     }
-    else if (etats.["valfatigue"] <= (20 + fatigue)) {
+    else if (etats["valfatigue"] <= (20 + etats["fatigue"])) {
       seuil = 12;
     }
     else {
       seuil = 15;
     }
   }
-  else if ((etats["valtension"] > etats.["valfatigue"]) && (etats["valtension"] > valFaiblesse)) {
-    if (etats["valtension"]n <= (11 + tension)) {
+  else if ((etats["valtension"] > etats["valfatigue"]) && (etats["valtension"] > etats["valfaiblesse"])) {
+    if (etats["valtension"]n <= (11 + etats["tension"])) {
       seuil = 9;
     }
-    else if (valTension <= (20 + tension)) {
+    else if (etats["valtension"] <= (20 + etats["tension"])) {
       seuil = 12;
     }
     else {
       seuil = 15;
     }
   }
-  else if ((valFaiblesse > etats["valtension"]n) && (valFaiblesse > etats.["valfatigue"])) {
-    if (valFaiblesse <= (11 + faiblesse)) {
+  else if ((etats["valfaiblesse"] > etats["valtension"]n) && (etats["valfaiblesse"] > etats["valfatigue"])) {
+    if (etats["valfaiblesse"] <= (11 + etats["faiblesse"])) {
       seuil = 9;
     }
-    else if (valFaiblesse <= (20 + faiblesse)) {
+    else if (etats["valfaiblesse"] <= (20 + etats["faiblesse"])) {
       seuil = 12;
     }
     else {
