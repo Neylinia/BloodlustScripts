@@ -17,9 +17,8 @@ function getArme(personnage,personnages){
   var arme;
   var nomArme = getAttrByName(personnage.id, "arme");
   personnages.forEach(function(chr) {
-						if (chr.get('name') == nomArme)
-							arme = chr;
-					});
+		if (chr.get('name') == nomArme) arme = chr;
+  });
   return arme;
 }
 
@@ -86,4 +85,34 @@ function calculSeuil(etats){
     }
   }
   return seuil;
+}
+
+function getAspectArme(idAspect,arme){
+	var repeat;
+	var aspect = [];
+	_.each(attr,function(indexAttributes) {
+		if (indexAttributes.get('_characterid') == arme.id) {
+			var attName = indexAttributes.get("name");
+			if (attName.indexOf("repeating_aspects_") > -1&& attName.indexOf("idAsp") == -1) {
+				if (indexAttributes.get("current") == idAspect) {
+					repeat = attName.substring(0,lastIndexOf("_"));
+				}
+			};
+		}
+	});
+	aspect.["valeur"] = getAttrByName(arme.id, repeat + "valAsp");
+	aspect.["nom"] = getAttrByName(arme.id, repeat + "nameAsp");
+	aspect.["nbDesSang"] = getAttrByName(arme.id, repeat + "nbDSAsp");
+	return aspect;
+}
+
+function getAspectPersonnage(faille, idAspect, personnage){
+	var aspect = [];
+	if(!faille){
+		aspect.["valeur"] = getAttrByName(personnage.id, "valaspect" + idAspect);
+		aspect.["nom"] = getAttrByName(personnage.id, "aspect" + idAspect);
+	}else{
+		aspect.["valeur"] = getAttrByName(personnage.id, "valfaille" + idAspect);
+		aspect.["nom"] = getAttrByName(speaking.id, "faille" + idAspect);
+	}
 }
