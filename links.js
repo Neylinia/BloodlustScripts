@@ -73,7 +73,7 @@ function calculSeuil(etats){
       seuil = 15;
     }
   }
-  else if ((etats["valfaiblesse"] > etats["valtension"]n) && (etats["valfaiblesse"] > etats["valfatigue"])) {
+  else if ((etats["valfaiblesse"] > etats["valtension"]) && (etats["valfaiblesse"] > etats["valfatigue"])) {
     if (etats["valfaiblesse"] <= (11 + etats["faiblesse"])) {
       seuil = 9;
     }
@@ -100,19 +100,19 @@ function getAspectArme(idAspect,arme){
 			};
 		}
 	});
-	aspect.["valeur"] = getAttrByName(arme.id, repeat + "valAsp");
-	aspect.["nom"] = getAttrByName(arme.id, repeat + "nameAsp");
-	aspect.["nbDesSang"] = getAttrByName(arme.id, repeat + "nbDSAsp");
+	aspect["valeur"] = getAttrByName(arme.id, repeat + "valAsp");
+	aspect["nom"] = getAttrByName(arme.id, repeat + "nameAsp");
+	aspect["nbDesSang"] = getAttrByName(arme.id, repeat + "nbDSAsp");
 	return aspect;
 }
 
 function getAspectPersonnage(faille, idAspect, personnage){
 	var aspect = [];
 	if(!faille){
-		aspect.["valeur"] = getAttrByName(personnage.id, "valaspect" + idAspect);
-		aspect.["nom"] = getAttrByName(personnage.id, "aspect" + idAspect);
+		aspect["valeur"] = getAttrByName(personnage.id, "valaspect" + idAspect);
+		aspect["nom"] = getAttrByName(personnage.id, "aspect" + idAspect);
 	}else{
-		aspect.["valeur"] = getAttrByName(personnage.id, "valfaille" + idAspect);
-		aspect.["nom"] = getAttrByName(speaking.id, "faille" + idAspect);
+		aspect["valeur"] = getAttrByName(personnage.id, "valfaille" + idAspect);
+		aspect["nom"] = getAttrByName(speaking.id, "faille" + idAspect);
 	}
 }
