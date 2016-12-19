@@ -27,5 +27,5 @@ Formats :
 
 Règles :
 * Jusqu'à trois aspects/aspects d'arme/failles uniquement
-* Un seul risque
-* Une seule difficulté
+* Une seule commande "risques"
+* Une seule commande "difficulté"
