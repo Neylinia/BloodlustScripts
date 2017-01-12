@@ -100,19 +100,40 @@ function getAspectArme(idAspect,arme){
 			};
 		}
 	});
-	aspect["valeur"] = getAttrByName(arme.id, repeat + "valAsp");
-	aspect["nom"] = getAttrByName(arme.id, repeat + "nameAsp");
-	aspect["nbDesSang"] = getAttrByName(arme.id, repeat + "nbDSAsp");
+	aspect.valeur = getAttrByName(arme.id, repeat + "valAsp");
+	aspect.nom = parseInt(getAttrByName(arme.id, repeat + "nameAsp"));
+	aspect.nbDesSang = parseInt(getAttrByName(arme.id, repeat + "nbDSAsp"));
+  aspect.type = "arme";
 	return aspect;
 }
 
 function getAspectPersonnage(faille, idAspect, personnage){
-	var aspect = [];
+	var aspect;
 	if(!faille){
-		aspect["valeur"] = getAttrByName(personnage.id, "valaspect" + idAspect);
-		aspect["nom"] = getAttrByName(personnage.id, "aspect" + idAspect);
+		aspect.valeur = getAttrByName(personnage.id, "valaspect" + idAspect);
+		aspect.nom = getAttrByName(personnage.id, "aspect" + idAspect);
+    aspect.type = "aspect"
 	}else{
-		aspect["valeur"] = getAttrByName(personnage.id, "valfaille" + idAspect);
-		aspect["nom"] = getAttrByName(speaking.id, "faille" + idAspect);
+		aspect.valeur = getAttrByName(personnage.id, "valfaille" + idAspect);
+		aspect.nom = getAttrByName(personnage.id, "faille" + idAspect);
+    aspect.type = "faille"
 	}
+  return aspect;
+}
+
+function getCompetence(competence, personnage){
+  var comp;
+  comp.nom = competence.charAt(0).toUpperCase() + competence.slice(1);
+  comp.valeur = parseInt(getAttrByName(personnage.id, competence));
+  personnages = getAllPersonnages();
+  arme = getArme(personnage,personnages);
+  nomComp1 = getAttrByName(arme.id,bonusComp1).toLowerCase();
+  nomComp2 = getAttrByName(arme.id,bonusComp2).toLowerCase();
+  if (nomComp1 == competence) {
+    comp.valeur = comp.valeur + parseInt(getAttrByName(arme.id,valBonusComp1));
+  }
+  if (nomComp2 == competence) {
+    comp.valeur = comp.valeur + parseInt(getAttrByName(arme.id,valBonusComp2));
+  }
+  return competence;
 }
