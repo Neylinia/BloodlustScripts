@@ -13,7 +13,8 @@ on('ready',function() {
 });
 
 function spliter(message){
-  var commande = split(message);
+  var messageMin = message.toLowerCase();
+  var commande = split(messageMin);
 }
 
 on("chat:message", function(msg){

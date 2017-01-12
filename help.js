@@ -6,8 +6,9 @@ function help(msg){
                 "<li>!gmAttack : Jet de dé secret pour attaque ciblée</li>"+
                 "<li>!defend : Jet de dé pour défense</li>"+
                 "<li>!gmDefend : Jet de dé secret pour défense</li>"+
-                "<li>!encaisse : Encaissement des dégats</li>"
-                "<li>!help : Cette commande</li></ul>";
+                "<li>!encaisse : Encaissement des dégats</li>"+
+                "<li>!help : Cette commande</li></ul>"+
+                "Pour savoir untiliser ces commandes, rien de tel que le <a href=\"https://github.com/Neylinia/BloodlustScripts/blob/master/README.md\">wiki</a>";
 
   sendChat('RollBot',"/w "+msg.who+" "+message);
 }
