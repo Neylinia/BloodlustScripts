@@ -100,23 +100,25 @@ function getAspectArme(idAspect,arme){
 			};
 		}
 	});
-	aspect.valeur = getAttrByName(arme.id, repeat + "valAsp");
-	aspect.nom = parseInt(getAttrByName(arme.id, repeat + "nameAsp"));
+	aspect.valeur = parseInt(getAttrByName(arme.id, repeat + "valAsp"));
+	aspect.nom = getAttrByName(arme.id, repeat + "nameAsp");
 	aspect.nbDesSang = parseInt(getAttrByName(arme.id, repeat + "nbDSAsp"));
-  aspect.type = "arme";
+  	aspect.type = "arme";
 	return aspect;
 }
 
 function getAspectPersonnage(faille, idAspect, personnage){
 	var aspect;
 	if(!faille){
-		aspect.valeur = getAttrByName(personnage.id, "valaspect" + idAspect);
+		aspect.valeur = parseInt(getAttrByName(personnage.id, "valaspect" + idAspect));
 		aspect.nom = getAttrByName(personnage.id, "aspect" + idAspect);
-    aspect.type = "aspect"
+		aspect.nbDesSang = 0;
+    		aspect.type = "aspect"
 	}else{
-		aspect.valeur = getAttrByName(personnage.id, "valfaille" + idAspect);
+		aspect.valeur = parseInt(getAttrByName(personnage.id, "valfaille" + idAspect));
 		aspect.nom = getAttrByName(personnage.id, "faille" + idAspect);
-    aspect.type = "faille"
+		aspect.nbDesSang = 0;
+    		aspect.type = "faille"
 	}
   return aspect;
 }
