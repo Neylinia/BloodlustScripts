@@ -33,10 +33,12 @@ function calculComp(commande,personnage){
   
   var etats = getEtats(personnage);
   result[0].seuil = calculSeuil(etats);
+  
+  var effort = getEffort(personnage);
 
   var i = 2;
 
-  while (i<commande.length) {
+  while (i<commande.length && effort.get("current")>=3) {
     if((commande[i].includes("a"))||(commande[i].includes("w"))||(commande[i].includes("f"))){
       result[i] = aspectRedirect(commande[i],personnage);
       nbDes = nbDes + result[i].valeur;
@@ -59,6 +61,11 @@ function calculComp(commande,personnage){
       result[0].difficulte = difficulte;
     }
     i++;
+    effort.set("current",effort.get("current") - 3);
+  }
+  
+  if(i!=commande.length){
+    return "STOP";
   }
 
   result[0].nbDes = nbDes;
@@ -104,9 +111,91 @@ function affichComp(gm,resCommande,msg){
   
   textRoll = textRoll + "<tr><td style=\"font-weight: bold; border:1px solid #A4A4A4; background-color:#FFFFFF; color: black;\" colspan=\"4\" align=\"center\">"
   textRoll = textRoll + "Seuil : "+resCommande[0].seuil+"</td></tr>";
+  
+  if(gm){
+   var compRoll = "/gmroll "+resCommande[0].nbDes+" 1d6"; 
+  }else{
+    var compRoll = "/roll "+resCommande[0].nbDes+" 1d6";
+  }
+  
+  sendChat(msg.who,compRoll,function(ops){
+    
+    var rollresult = ops[0].content;
+    var jsonResult = JSON.parse(rollresult);
+    var results = "<tr>";
+    var rolls = jsonResult.rolls[0].results;
+    var i = 1;
+    var nbUn = 0;
+    var j = 0;
+    var ds = resCommande[0].nbDesSang;
+    var nbQuality = parseInt(resCommande[0].risques);
+    
+    rolls.forEach(function(r){
+      if((j+ds)==resCommande[0].nbDes){
+        nbQuality++;
+        ds--;
+        results=results+"<td align=\"center\" width=\"25%;\" style=\"background-color:#FFFFFF;\">";
+        results=results+"<table><tr><td style=\"display: inline-block;min-width: 1.5em;text-align: center;";
+        results=results+"border: 2px solid black; background: #800000; color: white;\" align = \"center\">";
+        results=results+r.v+"</td></tr></table></td>";
+      } else if((r.v%2)==0){
+        nbQuality++;
+        results=results+"<td align=\"center\" width=\"25%;\" style=\"background-color:#FFFFFF;\">";
+        results=results+"<table><tr><td style=\"display: inline-block;min-width: 1.5em;text-align: center;";
+        results=results+"border: 2px solid black; background: #68AE7D; color: black;\" align = \"center\">";
+        results=results+r.v+"</td></tr></table></td>";
+      } else if((r.v)==1){
+        nbUn= nbUn + 1;
+        results=results+"<td align=\"center\" width=\"25%;\" style=\"background-color:#FFFFFF;\">";
+        results=results+"<table><tr><td style=\"display: inline-block;min-width: 1.5em;text-align: center;";
+        results=results+"border: 2px solid black; background: #AE6868; color: black;\" align = \"center\">";
+        results=results+r.v+"</td></tr></table></td>";
+      } else {
+        results=results+"<td align=\"center\" width=\"25%;\" style=\"background-color:#FFFFFF;\">";
+        results=results+"<table><tr><td style=\"display: inline-block;min-width: 1.5em;text-align: center;";
+        results=results+"border: 2px solid black; background: #BEBEBE; color: black;\" align = \"center\">";
+        results=results+r.v+"</td></tr></table></td>";
+      }
+      
+      if((i%4) == 0){
+        results = results + "</tr><tr>";
+        i=0;
+      }
+      j++;
+      i++;
+    });
+    
+    results = results + "<tr><td align=\"center\" colspan=\"4\">Résultat : "+jsonResult.total+"</td></tr>";
+    
+    if(jsonResult.total>=resCommande[0].seuil){
+      results = results + "<tr><td align=\"center\" colspan=\"4\" style=\"font-weight: bold; border: 1px solid #A4A4A4;";
+      results = results + " background-color: #3ADF00; color: black;\">Réussite avec "+ nbQuality +" qualités !</td></tr>";
+    } else {
+      if(nbUn>(resCommande[0].nbDes/2)){
+        results = results + "<tr><td align=\"center\" colspan=\"4\" style=\"font-weight: bold; border: 1px solid #A4A4A4;";
+        results = results + " background-color: #DF0101; color: white; \">Échec Critique !</td></tr>";
+      } else {
+        results = results + "<tr><td align=\"center\" colspan=\"4\" style=\"font-weight: bold; border: 1px solid #A4A4A4;";
+        results = results + " background-color: #FF4000; color: black;\">Échec !</td></tr>"
+      }
+    }
+    
+    results = results + "</tr></table>";
+    if(gm){
+      sendChat(msg.who,"/gm "+textRoll+results);
+      sendChat(msg.who,"/w "+msg.who+" "+textRoll+results);
+    } else {
+      sendChat(msg.who,textRoll+results);
+    }
+    
+  });
 }
 
 function competence(gm,commande,personnage,msg){
   var resCommande = calculComp(commande,personnage);
-  affichComp(gm,resCommande,msg);
+  if(resCommande == "STOP"){
+    sendChat("RollBot","/w"+msg.who+", Vous n'avez pas assez d'Effort pour faire ce test");
+  }else{
+    affichComp(gm,resCommande,msg);
+  }
 }
