@@ -6,7 +6,7 @@ function aspectRedirect(arg, personnage){
     var personnages = getAllPersonnages();
     var arme = getArme(personnage, personnages);
     aspect = getAspectArme(arg.substring(0,1), arme);
-  } else if(arg.includes("f"){
+  } else if(arg.includes("f")){
     aspect = getAspectPersonnage(true, arg.substring(0,1), personnage);
   }
   return aspect;
