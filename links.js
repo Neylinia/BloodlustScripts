@@ -63,7 +63,7 @@ function calculSeuil(etats){
     }
   }
   else if ((etats["valtension"] > etats["valfatigue"]) && (etats["valtension"] > etats["valfaiblesse"])) {
-    if (etats["valtension"]n <= (11 + etats["tension"])) {
+    if (etats["valtension"] <= (11 + etats["tension"])) {
       seuil = 9;
     }
     else if (etats["valtension"] <= (20 + etats["tension"])) {
