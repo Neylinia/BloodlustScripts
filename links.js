@@ -19,13 +19,14 @@ function getArme(personnage,personnages){
   personnages.forEach(function(chr) {
 		if (chr.get('name') == nomArme) arme = chr;
   });
+  
   return arme;
 }
 
 function getEtats(personnage){
   var etats = [];
   etats["fatigue"] = getAttrByName(personnage.id, "fatigue");
-  etats["valfatigue"] = getAttrByName(personnage.id, "valfatigue");
+  etats["valfatigue"] = getAttrByName(personnage.id, "valfatique");
   etats["faiblesse"] = getAttrByName(personnage.id, "faiblesse");
   etats["valfaiblesse"] = getAttrByName(personnage.id, "valfaiblesse");
   etats["tension"] = getAttrByName(personnage.id, "tension");
@@ -37,7 +38,7 @@ function getEffort(personnage){
   var attr = findObjs({_type: 'attribute'});
   var effort;
   attr.forEach(function(at) {
-    if(at.get('_characterid') == speaking.id) {
+    if(at.get('_characterid') == personnage.id) {
       if(at.get('name') == "effort") {
         effort = at;
       }
@@ -51,36 +52,29 @@ function calculSeuil(etats){
   if ((etats["valfatigue"] >= etats["valtension"]) && (etats["valfatigue"] >= etats["valfaiblesse"])) {
     if (etats["valfatigue"] == 0) {
       seuil = 6;
-    }
-    else if (etats["valfatigue"] <= (11 + etats["fatigue"])) {
+    } else if (etats["valfatigue"] <= (11 + etats["fatigue"])) {
       seuil = 9;
-    }
-    else if (etats["valfatigue"] <= (20 + etats["fatigue"])) {
+    } else if (etats["valfatigue"] <= (20 + etats["fatigue"])) {
       seuil = 12;
-    }
-    else {
+    } else {
       seuil = 15;
     }
   }
   else if ((etats["valtension"] > etats["valfatigue"]) && (etats["valtension"] > etats["valfaiblesse"])) {
     if (etats["valtension"] <= (11 + etats["tension"])) {
       seuil = 9;
-    }
-    else if (etats["valtension"] <= (20 + etats["tension"])) {
+    } else if (etats["valtension"] <= (20 + etats["tension"])) {
       seuil = 12;
-    }
-    else {
+    } else {
       seuil = 15;
     }
   }
   else if ((etats["valfaiblesse"] > etats["valtension"]) && (etats["valfaiblesse"] > etats["valfatigue"])) {
     if (etats["valfaiblesse"] <= (11 + etats["faiblesse"])) {
       seuil = 9;
-    }
-    else if (etats["valfaiblesse"] <= (20 + etats["faiblesse"])) {
+    } else if (etats["valfaiblesse"] <= (20 + etats["faiblesse"])) {
       seuil = 12;
-    }
-    else {
+    } else {
       seuil = 15;
     }
   }
@@ -89,13 +83,16 @@ function calculSeuil(etats){
 
 function getAspectArme(idAspect,arme){
 	var repeat;
-	var aspect = [];
+	
+	var attr = findObjs({_type: 'attribute'});
+	var aspect = {nom:null,valeur:null,nbDesSang:0,type:null};
 	_.each(attr,function(indexAttributes) {
 		if (indexAttributes.get('_characterid') == arme.id) {
 			var attName = indexAttributes.get("name");
-			if (attName.indexOf("repeating_aspects_") > -1&& attName.indexOf("idAsp") == -1) {
+			if (attName.includes("repeating_aspects_") && attName.includes("idAsp")) {
 				if (indexAttributes.get("current") == idAspect) {
-					repeat = attName.substring(0,lastIndexOf("_"));
+				    log(indexAttributes.get("current"));
+					repeat = attName.substring(0,attName.lastIndexOf("_")+1);
 				}
 			};
 		}
@@ -108,14 +105,14 @@ function getAspectArme(idAspect,arme){
 }
 
 function getAspectPersonnage(faille, idAspect, personnage){
-	var aspect;
+	var aspect = {nom:null,valeur:null,nbDesSang:0,type:null};
 	if(!faille){
 		aspect.valeur = parseInt(getAttrByName(personnage.id, "valaspect" + idAspect));
 		aspect.nom = getAttrByName(personnage.id, "aspect" + idAspect);
 		aspect.nbDesSang = 0;
     		aspect.type = "aspect"
 	}else{
-		aspect.valeur = parseInt(getAttrByName(personnage.id, "valfaille" + idAspect));
+		aspect.valeur = parseInt("-"+getAttrByName(personnage.id, "valfaille" + idAspect));
 		aspect.nom = getAttrByName(personnage.id, "faille" + idAspect);
 		aspect.nbDesSang = 0;
     		aspect.type = "faille"
@@ -124,18 +121,26 @@ function getAspectPersonnage(faille, idAspect, personnage){
 }
 
 function getCompetence(competence, personnage){
-  var comp;
+  var comp = {nom:null,valeur:null};
   comp.nom = competence.charAt(0).toUpperCase() + competence.slice(1);
   comp.valeur = parseInt(getAttrByName(personnage.id, competence));
   personnages = getAllPersonnages();
   arme = getArme(personnage,personnages);
-  nomComp1 = getAttrByName(arme.id,bonusComp1).toLowerCase();
-  nomComp2 = getAttrByName(arme.id,bonusComp2).toLowerCase();
-  if (nomComp1 == competence) {
-    comp.valeur = comp.valeur + parseInt(getAttrByName(arme.id,valBonusComp1));
+  
+  if(!(getAttrByName(arme.id,"bonusComp1") == null)){
+    nomComp1 = getAttrByName(arme.id,"bonusComp1").toLowerCase();
+    if (nomComp1 == competence) {
+        comp.valeur = comp.valeur + parseInt(getAttrByName(arme.id,"valBonusComp1"));
+    }
   }
-  if (nomComp2 == competence) {
-    comp.valeur = comp.valeur + parseInt(getAttrByName(arme.id,valBonusComp2));
+  
+  if(!(getAttrByName(arme.id,"bonusComp2") == null)){
+    nomComp2 = getAttrByName(arme.id,"bonusComp2").toLowerCase();
+    if (nomComp2 == competence) {
+        comp.valeur = comp.valeur + parseInt(getAttrByName(arme.id,"valBonusComp2"));
+    }
   }
-  return competence;
+  
+  
+  return comp;
 }
