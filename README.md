@@ -9,7 +9,7 @@ Les commandes couvrent tout ce qui a trait aux lancers de dés :
 * !attack : Jet d'attaque ciblée (secret : !gmAttack)
 * !defend : Jet de défense sur la dernière attaque ciblée (secret : !gmDefend)
 * !encaisse : Encaissement direct des dégats de la dernière attaque ciblée
-* !help : Liste des commandes en jeu
+* !help : Liste des commandes en jeu (Buguée pour le moment)
 
 ### Utilisation des commandes
 #### La commande !ROLL
