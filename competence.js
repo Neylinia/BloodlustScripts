@@ -13,23 +13,28 @@ function aspectRedirect(arg, personnage){
 }
 
 function calculComp(commande,personnage){
-  var result;
+  var result = [];
   var nbDes;
 
-  // result[0] -> nombre de dés à lancer + risques + dés de sang +difficulté
+  // result[0] -> nombre de dés à lancer + risques + dés de sang + difficulté + nb Aspects
   // result[1] -> compétence
   // result[2] -> aspect1
   // result[3] -> aspect2
   // result[4] -> aspect3
 
   result[1] = getCompetence(commande[1], personnage);
-  nbDes = result[1].valeur;
-  result[0].risques = 0;
-  result[0].difficulte = 0;
   
-  result[0].nbAspect = 0;
-  result[0].nbFaille = 0;
-  result[0].nbAspArme = 0;
+  nbDes = result[1].valeur;
+  
+  result[0] = {
+      nbDes:0,
+      risques:0,
+      difficulte:0,
+      nbAspect:0,
+      nbFaille:0,
+      nbAspArme:0,
+      desSang:0
+  };
   
   var etats = getEtats(personnage);
   result[0].seuil = calculSeuil(etats);
@@ -42,8 +47,7 @@ function calculComp(commande,personnage){
     if((commande[i].includes("a"))||(commande[i].includes("w"))||(commande[i].includes("f"))){
       result[i] = aspectRedirect(commande[i],personnage);
       nbDes = nbDes + result[i].valeur;
-      nbDes = nbDes + result[i].nbDesSang;
-      result[0].desSang = result[i].nbDesSang;
+      result[0].desSang = result[0].desSang + result[i].nbDesSang;
       if(commande[i].includes("a")){
         result[0].nbAspect++;
       }else if(commande[i].includes("w")){
@@ -60,8 +64,13 @@ function calculComp(commande,personnage){
       nbDes = nbDes + difficulte;
       result[0].difficulte = difficulte;
     }
+    
+    if(i!=2){
+        effort.set("current",effort.get("current") - 3);
+    }
+    
     i++;
-    effort.set("current",effort.get("current") - 3);
+    
   }
   
   if(i!=commande.length){
@@ -69,6 +78,7 @@ function calculComp(commande,personnage){
   }
 
   result[0].nbDes = nbDes;
+  
   return result;
 }
 
@@ -82,24 +92,43 @@ function affichComp(gm,resCommande,msg){
   
   var i = 2;
   
+  var asp = 0;
+  var arAsp = 0;
+  var fa = 0;
+  
   while(i < resCommande.length){
     if(resCommande[i].type == "aspect"){
-      textAspect = textAspect + "<td style=\"background-color:#FFFFFF;color: black;\"colspan=\"3\" align=\"left\">" +resCommande[i].nom;
+        if(asp > 0){
+          textAspect = textAspect + "<td></td>";
+      }
+      textAspect = textAspect + "<td style=\"background-color:#FFFFFF;color: black;\"colspan=\"3\" align=\"left\">" +resCommande[i].nom+"</td></tr><tr>";
+      asp++;
     }else if(resCommande[i].type == "arme"){
-      textAspArme = textAspArme + "<td style=\"background-color:#FFFFFF;color: black;\"colspan=\"3\" align=\"left\">" +resCommande[i].nom;
+        if(arAsp > 0){
+          textAspArme = textAspArme + "<td></td>";
+      }
+      textAspArme = textAspArme + "<td style=\"background-color:#FFFFFF;color: black;\"colspan=\"3\" align=\"left\">" +resCommande[i].nom+"</td></tr><tr>";
+      arAsp++;
     }else if(resCommande[i].type == "faille"){
-      textFaille = textFaille + "<td style=\"background-color:#FFFFFF;color: black;\"colspan=\"3\" align=\"left\">" +resCommande[i].nom;
+        if(fa > 0){
+          textFaille = textFaille + "<td></td>";
+      }
+      textFaille = textFaille + "<td style=\"background-color:#FFFFFF;color: black;\"colspan=\"3\" align=\"left\">" +resCommande[i].nom+"</td></tr><tr>";
+      fa++;
     }
+    i++;
   }
   
   if(resCommande[0].nbAspect > 0){
-    textAspect = textAspect + "</td></tr>";
+   textAspect = textAspect + "</tr>";
     textRoll = textRoll + textAspect;
-  }else if(resCommande[0].nbAspArme > 0){
-    textAspArme = textAspArme + "</td></tr>";
+  }
+  if(resCommande[0].nbAspArme > 0){
+    textAspArme = textAspArme + "</tr>";
     textRoll = textRoll + textAspArme;
-  }else if(resCommande[0].nbFaille > 0){
-    textFaille = textFaille + "</td></tr>";
+  }
+  if(resCommande[0].nbFaille > 0){
+    textFaille = textFaille + "</tr>";
     textRoll = textRoll + textFaille;
   }
   
@@ -113,9 +142,9 @@ function affichComp(gm,resCommande,msg){
   textRoll = textRoll + "Seuil : "+resCommande[0].seuil+"</td></tr>";
   
   if(gm){
-   var compRoll = "/gmroll "+resCommande[0].nbDes+" 1d6"; 
+   var compRoll = "/gmroll "+resCommande[0].nbDes+"d6"; 
   }else{
-    var compRoll = "/roll "+resCommande[0].nbDes+" 1d6";
+    var compRoll = "/roll "+resCommande[0].nbDes+"d6";
   }
   
   sendChat(msg.who,compRoll,function(ops){
@@ -127,13 +156,12 @@ function affichComp(gm,resCommande,msg){
     var i = 1;
     var nbUn = 0;
     var j = 0;
-    var ds = resCommande[0].nbDesSang;
+    var ds = resCommande[0].desSang;
     var nbQuality = parseInt(resCommande[0].risques);
     
     rolls.forEach(function(r){
-      if((j+ds)==resCommande[0].nbDes){
+      if(j<ds){
         nbQuality++;
-        ds--;
         results=results+"<td align=\"center\" width=\"25%;\" style=\"background-color:#FFFFFF;\">";
         results=results+"<table><tr><td style=\"display: inline-block;min-width: 1.5em;text-align: center;";
         results=results+"border: 2px solid black; background: #800000; color: white;\" align = \"center\">";
@@ -194,7 +222,7 @@ function affichComp(gm,resCommande,msg){
 function competence(gm,commande,personnage,msg){
   var resCommande = calculComp(commande,personnage);
   if(resCommande == "STOP"){
-    sendChat("RollBot","/w"+msg.who+", Vous n'avez pas assez d'Effort pour faire ce test");
+    sendChat("RollBot","/w "+msg.who+", Vous n'avez pas assez d'Effort pour faire ce test");
   }else{
     affichComp(gm,resCommande,msg);
   }
