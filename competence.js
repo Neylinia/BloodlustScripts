@@ -1,13 +1,13 @@
 function aspectRedirect(arg, personnage){
   var aspect;
   if(arg.includes("a")){
-    aspect = getAspectPersonnage(false, arg.substring(0,1), personnage);
+    aspect = getAspectPersonnage(false, arg.substr(0, arg.indexOf('a')), personnage);
   } else if(arg.includes("w")){
     var personnages = getAllPersonnages();
     var arme = getArme(personnage, personnages);
-    aspect = getAspectArme(arg.substring(0,1), arme);
+    aspect = getAspectArme(arg.substr(0, arg.indexOf('w')), arme);
   } else if(arg.includes("f")){
-    aspect = getAspectPersonnage(true, arg.substring(0,1), personnage);
+    aspect = getAspectPersonnage(true, arg.substr(0, arg.indexOf('f')), personnage);
   }
   return aspect;
 }
