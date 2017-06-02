@@ -42,9 +42,12 @@ function calculComp(commande,personnage){
   var effort = getEffort(personnage);
 
   var i = 2;
+  var j = 0;
+  var x = 0;
 
   while (i<commande.length && effort.get("current")>=3) {
     if((commande[i].includes("a"))||(commande[i].includes("w"))||(commande[i].includes("f"))){
+        j++;
       result[i] = aspectRedirect(commande[i],personnage);
       nbDes = nbDes + result[i].valeur;
       result[0].desSang = result[0].desSang + result[i].nbDesSang;
@@ -65,8 +68,9 @@ function calculComp(commande,personnage){
       result[0].difficulte = difficulte;
     }
     
-    if(i!=2){
+    if(j>1 && x!=j){
         effort.set("current",effort.get("current") - 3);
+        x = j;
     }
     
     i++;
@@ -74,6 +78,7 @@ function calculComp(commande,personnage){
   }
   
   if(i!=commande.length){
+      effort.set("current",effort.get("current") + (3*(j-1)));
     return "STOP";
   }
 
@@ -222,7 +227,7 @@ function affichComp(gm,resCommande,msg){
 function competence(gm,commande,personnage,msg){
   var resCommande = calculComp(commande,personnage);
   if(resCommande == "STOP"){
-    sendChat("RollBot","/w "+msg.who+", Vous n'avez pas assez d'Effort pour faire ce test");
+    sendChat("RollBot","/w "+msg.who+" , Vous n'avez pas assez d'Effort pour faire ce test");
   }else{
     affichComp(gm,resCommande,msg);
   }
